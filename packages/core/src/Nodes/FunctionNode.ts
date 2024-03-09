@@ -87,6 +87,12 @@ const getAlphabeticalKey = (index: number) => alpha[index];
 /** Converts list of sockets specifying value type names to an ordeered list of sockets,
  */
 
+/**
+ * Creates a list of sockets that are used to connect to the node
+ * @param sockets 
+ * @param getKey 
+ * @returns 
+ */
 function makeSocketsList(
   sockets: (string | { [key: string]: string })[] | undefined,
   getKey: (index: number) => string
@@ -107,6 +113,11 @@ function makeSocketsList(
   });
 }
 
+/**
+ * 
+ * @param param0 
+ * @returns 
+ */
 export function makeInNOutFunctionDesc({
   in: inputs,
   out,
@@ -123,10 +134,15 @@ export function makeInNOutFunctionDesc({
   exec: (...args: any[]) => any;
 }) {
   const inputSockets = makeSocketsList(inputs, getAlphabeticalKey);
+  // If 'out' is a string, the label will just be a single output 'result' 
+  // If 'out' is an array and a single object/key, it will run the getAlphabeticalKey function.
+  //    Example: [{flow: 'flow'}]
   const outputKeyFunc =
     typeof out === 'string' || out.length > 1
       ? () => 'result'
       : getAlphabeticalKey;
+  // If we are expecting a single output ('out' is a string), just return ['result']
+  // Otherwise if we are expecting multiple outputs, they should have already been defined, and we can just use those
   const outList = typeof out === 'string' ? [out] : out;
   const outputSockets = makeSocketsList(outList, outputKeyFunc);
 

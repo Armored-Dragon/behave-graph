@@ -40,6 +40,14 @@ import { StringValue } from './Values/StringValue.js';
 import { VariableGet } from './Variables/VariableGet.js';
 import { VariableSet } from './Variables/VariableSet.js';
 
+// TODO: Verify
+/**
+ * Returns a formatted array of ValueTypes.
+ * Uses memo for caching.
+ * 
+ * Example response:
+ * [['boolean': {name:'boolean', creator: () => false, ...}], ['string', {...}], (others...)]
+ */
 export const getCoreValuesMap = memo<ValueTypeMap>(() => {
   const valueTypes = [BooleanValue, StringValue, IntegerValue, FloatValue];
   return Object.fromEntries(
@@ -47,7 +55,16 @@ export const getCoreValuesMap = memo<ValueTypeMap>(() => {
   );
 });
 
+// TODO: Verify
+/**
+ * Goes though a list of ValueTypes (provided as ValueTypeMap) and returns conversions from that value to and from String
+ * Ignores "string" type because we don't need to turn a string into a string, or a string from a string.
+ * @param values 
+ * @returns 
+ */
+// TODO: getCoreValuesMap() is hardcoded here, but is supplied as "values" the one time this function is called. Is there a reason?
 function getCoreStringConversions(values: ValueTypeMap): NodeDefinition[] {
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flatMap
   return Object.keys(getCoreValuesMap())
     .filter((name) => name !== 'string')
     .flatMap((valueTypeName) =>
@@ -112,6 +129,12 @@ export const getCoreNodesMap = memo<Record<string, NodeDefinition>>(() => {
   );
 });
 
+// TODO: Verify
+/**
+ * "Exports" the list of valid core nodes to be used 
+ * @param registry 
+ * @returns 
+ */
 export const registerCoreProfile = (registry: IRegistry): IRegistry => {
   const values = { ...registry.values, ...getCoreValuesMap() };
   return {
